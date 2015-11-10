@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js – The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>strategy of React intergration</h1>
+					<h3>Using Backbone as Example</h3>
+					<p>
+						<small>Created by <a href="https://www.linkedin.com/pub/ping-wen-mark-hsu/8a/204/b7">Ping-Wen (Mark) Hsu</a></small>
+					</p>
+					<p>
+                      <small>2015/11/10 for <a href="http://www.meetup.com/ReactJS-Waterloo/">ReactJS Waterloo</a></small>
+					</p>
+                    <aside class="notes">
+                        The reason I choose Backbone is because this is what I'm currently working on. I tried AngularJs, but it's not making live easier. Just want to share how I did the change.
+                    </aside>
+				</section>
+
+                <section>
+                    <a href="#" class="navigate-down">
+                        <img data-src="./img/react-hype.jpg" alt="Down arrow">
+                    </a>
+                    <aside class="notes">
+                        The frontend technologies have changed so fast, every new technology did solve some problem and increase development speed. However, all the frameworks have there own specific way to do things, it's expensive to move from one to another.
+                    </aside>                    
+                </section>
+				
+				<section>
+                    <p>If you app structure looks like this:</p>
+                    <a href="#" class="navigate-down">
+                        <img data-src="./img/app_structure_messy.png" alt="Down arrow" >
+                    </a>
+                    <p class="fragment">I'm sorry about that</p>
+                    <aside class="notes">
+                        React or my strategy neither a medicine that cures all the diseases.
+                    </aside>
+				</section>
+                
+                <section>
+                    <p>If looks like this:</p>
+                    <a href="#" class="navigate-down">
+                        <img data-src="./img/app_structure.png" alt="Down arrow">
+                    </a>
+                    <p class="fragment">Fine, you can stay <span class="fragment">:-)</span></p>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+					<section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_1.png" alt="Down arrow">
+                        </a>
+					</section>
+					<section>
+					    <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_2.png" alt="Down arrow">
+                        </a>
+					</section>
+                    <section>
+					    <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_4.png" alt="Down arrow">
+                        </a>
+					</section>
+                    <section>
+					    <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_5.png" alt="Down arrow">
+                        </a>
+					</section>
+				</section>
+
+				<section>
+                    <section>
+                        <p>Example</p>
+                    </section>
+                   <section>
+                    <p>View</p>
+                    <pre>
+                        <code>
+//view.js
+views.ItemView = Backbone.View.extend({
+    events:{
+        'click .toggle': 'toggleCompleted',
+    },
+    initialize:function{
+        this.listenTo(this.model, 'change', this.render);
+    },
+    render:function(){
+        var itemHTML = _.template(item_html)({
+            item: this.model 
+        });
+        this.$el.html(itemHTML);
+    },
+    toggleCompleted:function(event){
+        this.model.toggle();
+    }
+});
+                        </code>
+                    </pre>
+                   </section>
+                    <section>
+                       <p>Template</p>
+                        <pre>
+                            <code>
+<!-- Template -->
+<div class="view">
+    &lt;input class="toggle" type="checkbox" &lt;%= item.get("completed") ? 'checked': '' %&gt;&gt;
+    &lt;label>&lt;%= item.get("title") %&gt;&lt;/label&gt;&lt;/label>
+    <button class="destroy"></button>
+</div>
+                        </code>
+                    </pre>
+                    </section>                   
+				</section>
+                <section>
+                    <section>
+                       <p>Step 1: Make a HTML render machine</p>
+                    </section>
+                    <section>
+                        <pre>
+                            <code>
+class Item extends React.Component{
+  render(){
+    const { item } = this.props;
+    return (
+        &lt;div className="view&gt;
+            &lt;input className="toggle" type="checkbox" item.get("completed") ? 'checked': '' /&gt;
+            &lt;label&gt;item.get("name")&lt;/label&gt;
+            &lt;button className="destroy"&gt;&lt;/button&gt;
+        &lt;/div&gt;
+    );
+  }
+}
+                            </code>
+                        </pre>
+                    </section>
+                    <section>
+                        <pre>
+                            <code class="hljs" style="word-wrap">
+<!-- Template -->
+<div class="view">
+    &lt;input class="toggle" type="checkbox" &lt;%= item.get("completed") ? 'checked': '' %&gt;&gt;
+    &lt;label>&lt;%= item.get("title") %&gt;&lt;/label&gt;&lt;/label>
+    <button class="destroy"></button>
+</div>
+                            </code>
+                        </pre>
+                        <pre>
+                            <code class="hljs" style="word-wrap">
+//Component.render()
+const { item } = this.props;
+return (
+    &lt;div className="view"&gt;
+        &lt;input className="toggle" type="checkbox" item.get("completed") ? 'checked': '' /&gt;
+        &lt;label&gt;item.get("name")&lt;/label&gt;
+        &lt;button className="destroy"&gt;&lt;/button&gt;
+    &lt;/div&gt;
+);
+                            </code>
+                        </pre>                        
+                    </section>   
+                    <section>
+                       <p>Then modify view render function</p>
+                        <pre>
+                            <code>
+//view.js
+views.ItemView = Backbone.View.extend({
+    render:function(){
+        //before
+        var itemHTML = _.template(item_html)({
+            item: this.model 
+        });
+        this.$el.html(itemHTMLitemHTML);
+        
+        //after
+        React.render(
+            &lt;Item item={this.model} /&gt;,
+            this.$el
+        );
+    },
+});
+                            </code>
+                        </pre>
+                    </section>
+					<section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_6.png" alt="Down arrow">
+                        </a>
+					</section>                    
+                </section>
+				<section>
+					<section>
+						<p>Step 2: Pass function handler</p>
+
+						<aside class="notes">
+							This slide has fragments which are also stepped through in the notes window.
+						</aside>
+					</section>
+					<section id="fragments">
+                        <p>2-1: Create a click handler</p>
+                        <pre>
+                            <code>
+class Item extends React.Component{
+  handleToggle(){
+    this.props.toggleCompleted();
+  }
+  render(){
+    const { item } = this.props;
+    return (
+        &lt;div className="view&gt;
+            &lt;input className="toggle" 
+                      type="checkbox" 
+                      item.get("completed") ? 'checked': '' 
+                      onClick={this.handleToggle.bind(this)}/&gt;
+            &lt;label&gt;item.get("name")&lt;/label&gt;
+            &lt;button className="destroy"&gt;&lt;/button&gt;
+        &lt;/div&gt;
+    );
+  }
+}
+                            </code>
+                        </pre>
+
+						<aside class="notes">
+							Create a click handler, and call the function that pass in as a prop.
+						</aside>
+					</section>
+                   <section>
+                    <p>2-2: Pass the view function into the component</p>
+                    <pre>
+                        <code>
+//view.js
+views.ItemView = Backbone.View.extend({
+//    events:{
+//        'click .toggle': 'toggleCompleted',
+//    },
+    initialize:function{
+        this.listenTo(this.model, 'change', this.render);
+    },
+    render:function(){
+        React.render(
+            &lt;Item item={this.model} toggleCompleted={toggleCompleted} /&gt;,
+            this.$el
+        );        
+    },
+    toggleCompleted:function(event){
+        this.model.toggle();
+    }
+});
+                        </code>
+                    </pre>
+                    <aside class="notes">
+                        Now you start taking benefit from React by simplifing event transmition procesure.
+                        Some people would add/remove classname here which you don't need it with React. Just put the logic into the component's render function. 
+                    </aside>                    
+                   </section>
+					<section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_7.png" alt="Down arrow">
+                        </a>
+					</section>                     								
+				</section>
+				
+				<section>
+                    <section>
+						<p>Step 3: Replace Backbone View</p>
+
+						<aside class="notes">
+							This part is tricky one, cuz here is the place you need to make a desision.
+						</aside>
+					</section>
+                    <section>
+						<p>A question needs to be answer:</p>
+						<p class="fragment">Is the model only be used by the current view/component?</p>
+						<ul>
+                            <li class="fragment">If yes, keep using model as a <strong>prop</strong> </li>
+                            <li class="fragment">If no, use <strong>states</strong> instead</li>
+                        </ul>
+						<aside class="notes">
+							Adoption of single source of truth begins. 
+						</aside>
+					</section>
+                    <section>
+						<p>If yes, keep using model as a <strong>prop</strong></p>
+                        <pre>
+                            <code class="hljs" style="word-wrap">
+class Item extends React.Component{
+  handleToggle(){
+    this.model.toggle();
+  }
+  render(){
+    const { item } = this.props;
+    return (
+        &lt;div className="view&gt;
+            &lt;input className="toggle" 
+                      type="checkbox" 
+                      item.get("completed") ? 'checked': '' 
+                      onClick={this.handleToggle.bind(this)}/&gt;
+            &lt;label&gt;item.get("name")&lt;/label&gt;
+            &lt;button className="destroy"&gt;&lt;/button&gt;
+        &lt;/div&gt;
+    );
+  }
+}                            
+                            </code>
+                        </pre>
+                        <aside class="notes">
+							The mutation happens in a parent component
+						</aside>                        
+					</section>                   
+                    <section>
+						<p>If no, use <strong>states</strong> instead</p>
+                        <pre>
+                            <code class="hljs" style="word-wrap">
+class Item extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      model: this.props.model,
+    };
+  }
+  handleToggle(){
+    this.state.model.toggle();
+    this.setState({model:this.model});
+  }
+  render(){
+    const item = this.state.model;
+    return (
+        &lt;div className="view&gt;
+            &lt;input className="toggle" 
+                      type="checkbox"
+                      item.get("completed") ? 'checked': '' 
+                      onClick={this.handleToggle.bind(this)}/&gt;
+            &lt;label&gt;item.get("name")&lt;/label&gt;
+            &lt;button className="destroy"&gt;&lt;/button&gt;
+        &lt;/div&gt;
+    );
+  }
+}                            
+                            </code>
+                        </pre>
+                        <aside class="notes">
+							This model is the single source of truth.
+						</aside>                         
+					</section>
+					<section>
+                      <pre>
+                          <code class="hljs" style="word-wrap">
+//ListView.js
+views.ListView = Backbone.View.extend({
+  render:function(){
+    var Items = this.collections.map(function(item){
+      return (
+        &lt;Item item={item}
+              //Pass function if ListView is in charge of data mutating
+              toggleCompleted={toggleCompleted}
+              key={item.get("id")}/&gt;
+      );
+    });
+
+    React.render(
+      Items,
+      this.$el
+    ); 
+  },
+});
+                          </code>
+                      </pre>					  
+					</section>
+					<section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_8.png" alt="Down arrow">
+                        </a>
+                        <aside class="notes">
+							The more you climb up the tree, the more you simplify your app.
+						</aside>                          
+					</section>				
+				</section>
+				
+				<section>
+                    <section>
+						<p>Step 4: Apply internal Flux by features</p>
+
+						<aside class="notes">
+							This part is tricky one, cuz here is the place you need to make a desision.
+						</aside>
+					</section>
+                    <section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_8_1.png" alt="Down arrow">
+                        </a>
+						<aside class="notes">
+							
+						</aside>
+					</section>	
+                    <section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_9.png" alt="Down arrow">
+                        </a>
+						<aside class="notes">
+							
+						</aside>
+					</section>	
+                    <section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_10.png" alt="Down arrow">
+                        </a>
+						<aside class="notes">
+							
+						</aside>
+					</section>	
+                    <section>
+                        <a href="#" class="navigate-down">
+                            <img data-src="./img/app_structure_11.png" alt="Down arrow">
+                        </a>
+						<aside class="notes">
+							
+						</aside>
+					</section>	
+				</section>
+
+				<section>
+				  <section>
+					<p>Can I still use third-party libraries?</p>
+				  </section>
+				  
+				  <section>
+					<p>You can use those:</p>
+					<ul>
+					  <li>Moment.js</li>
+					  <li>wysiwyg.js</li>
+					  <li>socket.io</li>
+					  <li>validate.js</li>
+					  <li>jQuery(Ajax, Events)</li>
+					</ul>
+				  </section>
+  
+                  <section>
+                    <p>You <strong>can't</strong> use those:</p>
+					<ul>
+					  <li>jQuery UI (use React-DnD instead)</li>
+					  <li>Hammer.js (use React-DnD instead)</li>
+					  <li>jQuery (DOM Manipulation)</li>
+					</ul>
+				  </section>
+				</section>
+
+                
+
+				<section data-state="customevent">
+					<h2>State Events</h2>
+					<p>
+						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
+					</p>
+					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
+Reveal.addEventListener( 'customevent', function() {
+	console.log( '"customevent" has fired' );
+} );
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Take a Moment</h2>
+					<p>
+						Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
+					</p>
+				</section>
+
+				<section>
+					<h2>Much more</h2>
+					<ul>
+						<li>Right-to-left support</li>
+						<li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
+						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
+					</ul>
+				</section>
+
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p>
+						- <a href="http://slides.com">Try the online editor</a> <br>
+						- <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'none', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
